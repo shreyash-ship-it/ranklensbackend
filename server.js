@@ -179,3 +179,9 @@ app.listen(PORT, () => {
   console.log(`   Health: http://localhost:${PORT}/health`);
   console.log(`   Analyze: POST http://localhost:${PORT}/api/analyze\n`);
 });
+// Keep-alive ping every 14 minutes to prevent Render sleep
+if (process.env.NODE_ENV === 'production' && process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => {
+    require('https').get(process.env.RENDER_EXTERNAL_URL + '/health', () => {}).on('error', () => {});
+  }, 14 * 60 * 1000);
+}
